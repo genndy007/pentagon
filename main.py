@@ -1,7 +1,7 @@
 import pygame
 
 # CONSTANTS
-WIN_WIDTH = 1800
+WIN_WIDTH = 1200
 WIN_HEIGHT = 768
 CELL_SIZE = 30
 MARGIN = 1
@@ -45,27 +45,71 @@ colours = [[WHITE for i in range(CELLS_IN_ROW)] for j in range(CELLS_IN_ROW)]
 ##### FIGURES PARTITION
 # Create all figures start positions
 fig_start_pos = {
-    "T": [(0, 0), (0, 1), (0, 2), (1, 1), (2, 1)],
-    "LADDER": [(2, 0), (2, 1), (1, 1), (1, 2), (0, 2)],
-    "SWAN": [(2, 0), (2, 1), (1, 1), (0, 1), (0, 2)],
-    "L": [(0, 0), (1, 0), (2, 0), (3, 0), (3, 1)],
-    "ARC": [(1, 0), (0, 0), (0, 1), (0, 2), (1, 2)],
-    "VERTZIG": [(0, 0), (1, 0), (1, 1), (2, 1), (3, 1)],
-    "RUG": [(2, 0), (1, 0), (0, 0), (0, 1), (0, 2)],
-    "STAIR": [(1, 0), (1, 1), (1, 2), (0, 2), (0, 1)],
-    "ONE": [(1, 0), (0, 1), (1, 1), (2, 1), (3, 1)],
-    "ZIGZAG": [(0, 0), (0, 1), (1, 1), (1, 2), (2, 1)],
-    "STICK": [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)],
-    "PLUS": [(1, 0), (1, 1), (0, 1), (1, 2), (2, 1)]
+    "T": [[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]],
+    "LADDER": [[2, 0], [2, 1], [1, 1], [1, 2], [0, 2]],
+    "SWAN": [[2, 0], [2, 1], [1, 1], [0, 1], [0, 2]],
+    "L": [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]],
+    "ARC": [[1, 0], [0, 0], [0, 1], [0, 2], [1, 2]],
+    "VERTZIG": [[0, 0], [1, 0], [1, 1], [2, 1], [3, 1]],
+    "RUG": [[2, 0], [1, 0], [0, 0], [0, 1], [0, 2]],
+    "STAIR": [[1, 0], [1, 1], [1, 2], [0, 2], [0, 1]],
+    "ONE": [[1, 0], [0, 1], [1, 1], [2, 1], [3, 1]],
+    "ZIGZAG": [[0, 0], [0, 1], [1, 1], [1, 2], [2, 1]],
+    "STICK": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+    "PLUS": [[1, 0], [1, 1], [0, 1], [1, 2], [2, 1]]
+}
+fig_field_pos = {
+    "T": [[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]],
+    "LADDER": [[2, 0], [2, 1], [1, 1], [1, 2], [0, 2]],
+    "SWAN": [[2, 0], [2, 1], [1, 1], [0, 1], [0, 2]],
+    "L": [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]],
+    "ARC": [[1, 0], [0, 0], [0, 1], [0, 2], [1, 2]],
+    "VERTZIG": [[0, 0], [1, 0], [1, 1], [2, 1], [3, 1]],
+    "RUG": [[2, 0], [1, 0], [0, 0], [0, 1], [0, 2]],
+    "STAIR": [[1, 0], [1, 1], [1, 2], [0, 2], [0, 1]],
+    "ONE": [[1, 0], [0, 1], [1, 1], [2, 1], [3, 1]],
+    "ZIGZAG": [[0, 0], [0, 1], [1, 1], [1, 2], [2, 1]],
+    "STICK": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+    "PLUS": [[1, 0], [1, 1], [0, 1], [1, 2], [2, 1]]
 }
 # ALL the figures
 figure_list = ["T", "LADDER", "SWAN", 'L', 'ARC', 'VERTZIG', 'RUG', 'STAIR', 'ONE', 'ZIGZAG', 'STICK', 'PLUS']
+# Is figure on field?
+on_field = {
+    "T": False,
+    "LADDER": False,
+    "SWAN": False,
+    "L": False,
+    "ARC": False,
+    "VERTZIG": False,
+    "RUG": False,
+    "STAIR": False,
+    "ONE": False,
+    "ZIGZAG": False,
+    "STICK": False,
+    "PLUS": False
+}
+# Is figure under control now?
+activated = {
+    "T": False,
+    "LADDER": False,
+    "SWAN": False,
+    "L": False,
+    "ARC": False,
+    "VERTZIG": False,
+    "RUG": False,
+    "STAIR": False,
+    "ONE": False,
+    "ZIGZAG": False,
+    "STICK": False,
+    "PLUS": False
+}
 # ------------------------
 
 # Draw a new figure at field
 def figure_to_field(figure):
     colours = [[WHITE for i in range(CELLS_IN_ROW)] for j in range(CELLS_IN_ROW)]
-    for cell in fig_start_pos[figure]:
+    for cell in fig_field_pos[figure]:
         colours[cell[0]][cell[1]] = GREEN
     return colours
 
@@ -96,7 +140,7 @@ def show_all_figures():
 running = True
 while running:
     # Screen filler
-    screen.fill(BLACK)
+    screen.fill(LIGHT_BLUE)
     # Drawing a field
     for i in range(len(all_cells)):
         for j in range(len(all_cells[i])):
@@ -116,6 +160,31 @@ while running:
                 for el in all_poses[i]:
                     if x > el[0] and x < el[0] + CELL_SIZE and y > el[1] and y < el[1] + CELL_SIZE:
                         colours = figure_to_field(figure_list[i])
+                        on_field[figure_list[i]] = True
+                        activated[figure_list[i]] = True
+
+        # Keyboard events
+        if event.type == pygame.KEYDOWN:
+            for fig in activated:
+                if activated[fig]:
+                    # Moving figure to sides
+                    if event.key == pygame.K_RIGHT:
+                        for coord in fig_field_pos[fig]:
+                            coord[1] += 1
+                        colours = figure_to_field(fig)
+                    if event.key == pygame.K_LEFT:
+                        for coord in fig_field_pos[fig]:
+                            coord[1] -= 1
+                        colours = figure_to_field(fig)
+                    if event.key == pygame.K_UP:
+                        for coord in fig_field_pos[fig]:
+                            coord[0] -= 1
+                        colours = figure_to_field(fig)
+                    if event.key == pygame.K_DOWN:
+                        for coord in fig_field_pos[fig]:
+                            coord[0] += 1
+                        colours = figure_to_field(fig)
+
     # Managing framerate
     clock.tick(FPS)
     # Updating the whole picture
