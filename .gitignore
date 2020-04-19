@@ -1,0 +1,3 @@
+# do not need virtual environment
+venv/
+.idea/
