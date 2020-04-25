@@ -78,7 +78,7 @@ all_figures = [T, LADDER, SWAN, L, ARC, VERTZIG, RUG, STAIR, ONE, ZIGZAG, STICK,
 
 
 
-
+activated = None
 
 running = True
 while running:
@@ -103,10 +103,23 @@ while running:
             for i in range(len(figure_positions)):
                 for el in figure_positions[i]:
                     if x > el[0] and x < el[0] + Cell.CELL_SIZE and y > el[1] and y < el[1] + Cell.CELL_SIZE:
-                        all_figures[i].startX = 20
-                        all_figures[i].startY = 20
+                        activated = all_figures[i]
+                        if x > 20 and x < 400 and y > 20 and y < 400:
+                            continue
+                        else:
+                            all_figures[i].startX = 20
+                            all_figures[i].startY = 20
+        # Managing figure movement
         if event.type == pygame.KEYDOWN:
-            pass
+            if activated is not None:
+                if event.key == pygame.K_RIGHT:
+                    activated.startX += Cell.CELL_SIZE + Cell.MARGIN
+                if event.key == pygame.K_LEFT:
+                    activated.startX -= Cell.CELL_SIZE + Cell.MARGIN
+                if event.key == pygame.K_UP:
+                    activated.startY -= Cell.CELL_SIZE + Cell.MARGIN
+                if event.key == pygame.K_DOWN:
+                    activated.startY += Cell.CELL_SIZE + Cell.MARGIN
 
     # Managing framerate
     clock.tick(FPS)
