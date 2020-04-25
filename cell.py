@@ -1,11 +1,11 @@
 import pygame
+from classes import Cell, Figure, Field
 
 WIN_WIDTH = 1200
 WIN_HEIGHT = 768
 FPS = 30
-MARGIN = 1
 
-# COLOURS
+# Standard COLOURS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (125, 125, 125)
@@ -15,6 +15,20 @@ YELLOW = (225, 225, 0)
 PINK = (230, 50, 230)
 RED = (255, 0, 0)
 # ----------------
+# Trendy colours
+GREENERY = (136, 176, 75)
+ROSE = (247, 202, 201)
+SERENITY = (146, 168, 209)
+MARSALA = (149, 82, 81)
+ORCHID = (181, 101, 167)
+EMERALD = (0, 155, 119)
+TANGO = (221, 65, 36)
+HONEY = (214, 80, 118)
+TURQ = (68, 184, 172)
+MIMOSA = (239, 192, 80)
+CHILI = (155, 35, 53)
+LILY = (225, 93, 68)
+# ----------
 
 # Initiate and create a screen surface
 pygame.init()
@@ -24,37 +38,43 @@ pygame.display.set_caption("Pentagon")
 clock = pygame.time.Clock()
 
 
-class Cell:
-    CELL_SIZE = 30
 
-    def __init__(self, color, x, y):
-        self.coords = [x, y, self.CELL_SIZE, self.CELL_SIZE]
-        self.color = color
-
-    def draw(self):
-        pygame.draw.rect(screen, self.color, self.coords)
-
-
-
-
-class Figure:
-    pass
-
-class Field:
-    def __init__(self, size):
-        self.size = size
 
 # Creating field
 field = Field(12)
+field_cells = field.creating_cells()
 
-# Creating field cells
-all_cells = []
-for i in range(field.size):
-    for j in range(field.size):
-        x = 20 + (Cell.CELL_SIZE + MARGIN) * i
-        y = 20 + (Cell.CELL_SIZE + MARGIN) * j
-        all_cells.append(Cell(WHITE, x, y))
+# All figures relative cell position
+fig_start_pos = {
+    "T": [[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]],
+    "LADDER": [[2, 0], [2, 1], [1, 1], [1, 2], [0, 2]],
+    "SWAN": [[2, 0], [2, 1], [1, 1], [0, 1], [0, 2]],
+    "L": [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]],
+    "ARC": [[1, 0], [0, 0], [0, 1], [0, 2], [1, 2]],
+    "VERTZIG": [[0, 0], [1, 0], [1, 1], [2, 1], [3, 1]],
+    "RUG": [[2, 0], [1, 0], [0, 0], [0, 1], [0, 2]],
+    "STAIR": [[1, 0], [1, 1], [1, 2], [0, 2], [0, 1]],
+    "ONE": [[1, 0], [0, 1], [1, 1], [2, 1], [3, 1]],
+    "ZIGZAG": [[0, 0], [0, 1], [1, 1], [1, 2], [2, 1]],
+    "STICK": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+    "PLUS": [[1, 0], [1, 1], [0, 1], [1, 2], [2, 1]]
+}
+# Creating figures
 
+T = Figure(GREENERY, fig_start_pos["T"], 450, 20)
+LADDER = Figure(ROSE, fig_start_pos["LADDER"], 600, 20)
+SWAN = Figure(SERENITY, fig_start_pos["SWAN"], 750, 20)
+L = Figure(MARSALA, fig_start_pos["L"], 900, 20)
+ARC = Figure(ORCHID, fig_start_pos["ARC"], 1050, 20)
+VERTZIG = Figure(EMERALD, fig_start_pos["VERTZIG"], 1200, 20)
+RUG = Figure(TANGO, fig_start_pos["RUG"], 450, 200)
+STAIR = Figure(HONEY, fig_start_pos["STAIR"], 600, 200)
+ONE = Figure(TURQ, fig_start_pos["ONE"], 750, 200)
+ZIGZAG = Figure(MIMOSA, fig_start_pos["ZIGZAG"], 900, 200)
+STICK = Figure(CHILI, fig_start_pos["STICK"], 1050, 200)
+PLUS = Figure(LILY, fig_start_pos["PLUS"], 1200, 200)
+
+all_figures = [T, LADDER, SWAN, L, ARC, VERTZIG, RUG, STAIR, ONE, ZIGZAG, STICK, PLUS]
 
 
 
@@ -62,9 +82,11 @@ for i in range(field.size):
 
 running = True
 while running:
-    screen.fill(LIGHT_BLUE)
-    for cell in all_cells:
-        cell.draw()
+    screen.fill(BLACK)
+    field.draw(field_cells, screen)
+
+    for figure in all_figures:
+        figure.draw(figure.creating_cells(), screen)
 
     for event in pygame.event.get():
         # Managing quit
