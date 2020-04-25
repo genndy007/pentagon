@@ -1,7 +1,7 @@
 import pygame
 from classes import Cell, Figure, Field
 
-WIN_WIDTH = 1200
+WIN_WIDTH = 1350
 WIN_HEIGHT = 768
 FPS = 30
 
@@ -84,14 +84,21 @@ running = True
 while running:
     screen.fill(BLACK)
     field.draw(field_cells, screen)
-
+    figure_positions = []
     for figure in all_figures:
-        figure.draw(figure.creating_cells(), screen)
+        pos_info = figure.creating_cells()
+        figure.draw(pos_info[0], screen)
+        figure_positions.append(pos_info[1])
 
     for event in pygame.event.get():
         # Managing quit
         if event.type == pygame.QUIT:
             running = False
+        # Managing clicks
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+
+
 
     # Managing framerate
     clock.tick(FPS)

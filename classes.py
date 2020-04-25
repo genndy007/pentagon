@@ -34,10 +34,12 @@ class Figure:
 
     def creating_cells(self):
         cells = []
+        all_poses = []
         for coord in self.colloc:
             pos = (self.startX+(Cell.CELL_SIZE+Cell.MARGIN)*coord[1], self.startY+(Cell.CELL_SIZE+Cell.MARGIN)*coord[0])
             cells.append(Cell(self.color, pos[0], pos[1]))
-        return cells
+            all_poses.append(pos)
+        return cells, all_poses
 
     def draw(self, cells, scr):
         for cell in cells:
