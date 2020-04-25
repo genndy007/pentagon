@@ -59,8 +59,8 @@ fig_start_pos = {
     "STICK": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
     "PLUS": [[1, 0], [1, 1], [0, 1], [1, 2], [2, 1]]
 }
-# Creating figures
 
+# Creating figures
 T = Figure(GREENERY, fig_start_pos["T"], 450, 20)
 LADDER = Figure(ROSE, fig_start_pos["LADDER"], 600, 20)
 SWAN = Figure(SERENITY, fig_start_pos["SWAN"], 750, 20)
@@ -82,8 +82,11 @@ all_figures = [T, LADDER, SWAN, L, ARC, VERTZIG, RUG, STAIR, ONE, ZIGZAG, STICK,
 
 running = True
 while running:
+    # Filling screen
     screen.fill(BLACK)
+    # Drawing field
     field.draw(field_cells, screen)
+    # Placing figures and getting their positions
     figure_positions = []
     for figure in all_figures:
         pos_info = figure.creating_cells()
@@ -97,8 +100,13 @@ while running:
         # Managing clicks
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-
-
+            for i in range(len(figure_positions)):
+                for el in figure_positions[i]:
+                    if x > el[0] and x < el[0] + Cell.CELL_SIZE and y > el[1] and y < el[1] + Cell.CELL_SIZE:
+                        all_figures[i].startX = 20
+                        all_figures[i].startY = 20
+        if event.type == pygame.KEYDOWN:
+            pass
 
     # Managing framerate
     clock.tick(FPS)
