@@ -3,7 +3,9 @@ from classes import Cell, Figure, Field
 
 WIN_WIDTH = 1350
 WIN_HEIGHT = 768
-FPS = 30
+FPS = 60
+MIN_BORDER_CORNER = 20
+MAX_BORDER_CORNER = 361
 
 # Standard COLOURS
 WHITE = (255, 255, 255)
@@ -90,7 +92,7 @@ all_figures = [T, LADDER, SWAN, L, ARC, VERTZIG, RUG, STAIR, ONE, ZIGZAG, STICK,
 
 desk_positions = [[450, 20], [600, 20], [750, 20], [900, 20], [1050, 20], [1200, 20], [450, 200], [600, 200], [750, 200], [900, 200], [1050, 200], [1200, 200]]
 
-
+# GAMEPLAY ------------
 
 activated = None
 
@@ -104,8 +106,12 @@ while running:
     figure_positions = []
     for figure in all_figures:
         pos_info = figure.creating_cells()
-        figure.draw(pos_info[0], screen)
         figure_positions.append(pos_info[1])
+        figure.check_moving(pos_info[1])
+        used = figure.check_borders(pos_info[1])
+        if used is None:
+            figure.draw(pos_info[0], screen)
+
 
     for event in pygame.event.get():
         # Managing quit
@@ -120,26 +126,28 @@ while running:
                     if x > el[0] and x < el[0] + Cell.CELL_SIZE and y > el[1] and y < el[1] + Cell.CELL_SIZE:
                         if lmb:
                             activated = all_figures[i]
-                            if x > 20 and x < 400 and y > 20 and y < 400:
+                            if x > MIN_BORDER_CORNER and x < MAX_BORDER_CORNER + Cell.CELL_SIZE and y > MIN_BORDER_CORNER and y < MAX_BORDER_CORNER + Cell.CELL_SIZE:
                                 continue
                             else:
-                                all_figures[i].startX = 20
-                                all_figures[i].startY = 20
+                                all_figures[i].ON_FIELD = True
+                                all_figures[i].startX = MIN_BORDER_CORNER
+                                all_figures[i].startY = MIN_BORDER_CORNER
                         elif rmb and activated is not None and activated == all_figures[i]:
                             activated.startX = desk_positions[i][0]
                             activated.startY = desk_positions[i][1]
+                            activated.ON_FIELD = False
                             activated = None
 
         # Managing figure movement
         if event.type == pygame.KEYDOWN:
             if activated is not None:
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and activated.MOVE_RIGHT:
                     activated.startX += Cell.CELL_SIZE + Cell.MARGIN
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and activated.MOVE_LEFT:
                     activated.startX -= Cell.CELL_SIZE + Cell.MARGIN
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP and activated.MOVE_UP:
                     activated.startY -= Cell.CELL_SIZE + Cell.MARGIN
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN and activated.MOVE_DOWN:
                     activated.startY += Cell.CELL_SIZE + Cell.MARGIN
                 if event.key == pygame.K_SPACE:
                     activated.rotate()

@@ -27,6 +27,11 @@ class Cell:
 
 class Figure:
     pos_index = 0
+    MOVE_LEFT = True
+    MOVE_RIGHT = True
+    MOVE_UP = True
+    MOVE_DOWN = True
+    ON_FIELD = False
 
     def __init__(self, color, colloc, startX, startY):
         self.color = color
@@ -53,8 +58,42 @@ class Figure:
         for cell in cells:
             cell.draw(scr)
 
+    def check_moving(self, coords):
+        self.MOVE_LEFT = True
+        self.MOVE_RIGHT = True
+        self.MOVE_UP = True
+        self.MOVE_DOWN = True
+        for point in coords:
+            if point[0] == Field.MIN_BORDER_CORNER:
+                self.MOVE_LEFT = False
+            if point[1] == Field.MIN_BORDER_CORNER:
+                self.MOVE_UP = False
+            if point[0] == Field.MAX_BORDER_CORNER:
+                self.MOVE_RIGHT = False
+            if point[1] == Field.MAX_BORDER_CORNER:
+                self.MOVE_DOWN = False
+
+    def check_borders(self, coords):
+        used = None
+        for point in coords:
+            if point[0] < Field.MIN_BORDER_CORNER and self.ON_FIELD:
+                self.startX += Cell.CELL_SIZE + Cell.MARGIN
+                used = True
+            if point[1] < Field.MIN_BORDER_CORNER and self.ON_FIELD:
+                self.startY += Cell.CELL_SIZE + Cell.MARGIN
+                used = True
+            if point[0] > Field.MAX_BORDER_CORNER and self.ON_FIELD:
+                self.startX -= Cell.CELL_SIZE + Cell.MARGIN
+                used = True
+            if point[1] > Field.MAX_BORDER_CORNER and self.ON_FIELD:
+                self.startY -= Cell.CELL_SIZE + Cell.MARGIN
+                used = True
+        return used
+
 
 class Field:
+    MIN_BORDER_CORNER = 20
+    MAX_BORDER_CORNER = 361
     def __init__(self, size):
         self.size = size
 
@@ -62,8 +101,8 @@ class Field:
         all_cells = []
         for i in range(self.size):
             for j in range(self.size):
-                x = 20 + (Cell.CELL_SIZE + Cell.MARGIN) * i
-                y = 20 + (Cell.CELL_SIZE + Cell.MARGIN) * j
+                x = self.MIN_BORDER_CORNER + (Cell.CELL_SIZE + Cell.MARGIN) * i
+                y = self.MIN_BORDER_CORNER + (Cell.CELL_SIZE + Cell.MARGIN) * j
                 all_cells.append(Cell(WHITE, x, y))
         return all_cells
 
