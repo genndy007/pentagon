@@ -1,11 +1,16 @@
 import pygame
 from classes import Cell, Figure, Field
+from math import sqrt, ceil
 
 WIN_WIDTH = 1350
 WIN_HEIGHT = 768
 FPS = 60
 MIN_BORDER_CORNER = 20
 MAX_BORDER_CORNER = 361
+
+MIN_WIN_DIST = ceil(sqrt(2*(Cell.CELL_SIZE+Cell.MARGIN)**2))
+
+
 
 # Standard COLOURS
 WHITE = (255, 255, 255)
@@ -36,6 +41,8 @@ LILY = (225, 93, 68)
 pygame.init()
 screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption("Pentagon")
+icon = pygame.image.load('Pentagon-512.png')
+pygame.display.set_icon(icon)
 # Handling FPS or smth
 clock = pygame.time.Clock()
 
@@ -102,15 +109,27 @@ while running:
     screen.fill(BLACK)
     # Drawing field
     field.draw(field_cells, screen)
+    # Supposing all figures are on field
+    all_on_field = True
     # Placing figures and getting their positions
     figure_positions = []
     for figure in all_figures:
+        # Create figure cells
         pos_info = figure.creating_cells()
+        # Collecting their positions
         figure_positions.append(pos_info[1])
+        # Check if able to move
         figure.check_moving(pos_info[1])
+        # Check if figure is inside the borders
         used = figure.check_borders(pos_info[1])
+        # Draw figure if it is inside the borders
         if used is None:
             figure.draw(pos_info[0], screen)
+        # Checking if figure is on field
+        if not figure.ON_FIELD:
+            all_on_field = False
+        # if figure.colloc == fig_start_pos["STICK"]:
+        #     print(pos_info[1])
 
 
     for event in pygame.event.get():
@@ -119,19 +138,24 @@ while running:
             running = False
         # Managing clicks
         if event.type == pygame.MOUSEBUTTONDOWN:
+            # Button status
             lmb, mmb, rmb = pygame.mouse.get_pressed()
+            # Where clicked
             x, y = event.pos
             for i in range(len(figure_positions)):
                 for el in figure_positions[i]:
                     if x > el[0] and x < el[0] + Cell.CELL_SIZE and y > el[1] and y < el[1] + Cell.CELL_SIZE:
+                        # Managing LMB
                         if lmb:
                             activated = all_figures[i]
+                            # Placing figure on the field if it's not on
                             if x > MIN_BORDER_CORNER and x < MAX_BORDER_CORNER + Cell.CELL_SIZE and y > MIN_BORDER_CORNER and y < MAX_BORDER_CORNER + Cell.CELL_SIZE:
                                 continue
                             else:
                                 all_figures[i].ON_FIELD = True
                                 all_figures[i].startX = MIN_BORDER_CORNER
                                 all_figures[i].startY = MIN_BORDER_CORNER
+                        # Managing RMB
                         elif rmb and activated is not None and activated == all_figures[i]:
                             activated.startX = desk_positions[i][0]
                             activated.startY = desk_positions[i][1]
@@ -149,8 +173,27 @@ while running:
                     activated.startY -= Cell.CELL_SIZE + Cell.MARGIN
                 if event.key == pygame.K_DOWN and activated.MOVE_DOWN:
                     activated.startY += Cell.CELL_SIZE + Cell.MARGIN
+                # Rotating the figure
                 if event.key == pygame.K_SPACE:
                     activated.rotate()
+    # Checking figures positions if they all on field
+    if all_on_field:
+        win = True
+        for i in range(len(figure_positions)):
+            for point1 in figure_positions[i]:
+                x1 = point1[0]
+                y1 = point1[1]
+                for j in range(len(figure_positions)):
+                    if i == j:
+                        continue
+                    for point2 in figure_positions[j]:
+                        x2 = point2[0]
+                        y2 = point2[1]
+                        if sqrt((x2-x1)**2+(y2-y1)**2) < MIN_WIN_DIST:
+                            win = False
+        if win:
+            print("YOUUUU WIINNN")
+
 
 
     # Managing framerate
