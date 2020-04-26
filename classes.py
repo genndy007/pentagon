@@ -26,6 +26,7 @@ class Cell:
 
 
 class Figure:
+    pos_index = 0
     def __init__(self, color, colloc, startX, startY):
         self.color = color
         self.colloc = colloc
@@ -35,11 +36,17 @@ class Figure:
     def creating_cells(self):
         cells = []
         all_poses = []
-        for coord in self.colloc:
+        for coord in self.colloc[self.pos_index]:
             pos = (self.startX+(Cell.CELL_SIZE+Cell.MARGIN)*coord[1], self.startY+(Cell.CELL_SIZE+Cell.MARGIN)*coord[0])
             cells.append(Cell(self.color, pos[0], pos[1]))
             all_poses.append(pos)
         return cells, all_poses
+
+    def rotate(self):
+        if self.pos_index >= len(self.colloc) - 1:
+            self.pos_index = 0
+        else:
+            self.pos_index += 1
 
     def draw(self, cells, scr):
         for cell in cells:
