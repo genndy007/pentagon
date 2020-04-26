@@ -27,6 +27,7 @@ class Cell:
 
 class Figure:
     pos_index = 0
+
     def __init__(self, color, colloc, startX, startY):
         self.color = color
         self.colloc = colloc
@@ -51,7 +52,6 @@ class Figure:
     def draw(self, cells, scr):
         for cell in cells:
             cell.draw(scr)
-
 
 
 class Field:

@@ -88,6 +88,8 @@ PLUS = Figure(LILY, fig_start_pos["PLUS"], 1200, 200)
 
 all_figures = [T, LADDER, SWAN, L, ARC, VERTZIG, RUG, STAIR, ONE, ZIGZAG, STICK, PLUS]
 
+desk_positions = [[450, 20], [600, 20], [750, 20], [900, 20], [1050, 20], [1200, 20], [450, 200], [600, 200], [750, 200], [900, 200], [1050, 200], [1200, 200]]
+
 
 
 activated = None
@@ -111,16 +113,23 @@ while running:
             running = False
         # Managing clicks
         if event.type == pygame.MOUSEBUTTONDOWN:
+            lmb, mmb, rmb = pygame.mouse.get_pressed()
             x, y = event.pos
             for i in range(len(figure_positions)):
                 for el in figure_positions[i]:
                     if x > el[0] and x < el[0] + Cell.CELL_SIZE and y > el[1] and y < el[1] + Cell.CELL_SIZE:
-                        activated = all_figures[i]
-                        if x > 20 and x < 400 and y > 20 and y < 400:
-                            continue
-                        else:
-                            all_figures[i].startX = 20
-                            all_figures[i].startY = 20
+                        if lmb:
+                            activated = all_figures[i]
+                            if x > 20 and x < 400 and y > 20 and y < 400:
+                                continue
+                            else:
+                                all_figures[i].startX = 20
+                                all_figures[i].startY = 20
+                        elif rmb and activated is not None and activated == all_figures[i]:
+                            activated.startX = desk_positions[i][0]
+                            activated.startY = desk_positions[i][1]
+                            activated = None
+
         # Managing figure movement
         if event.type == pygame.KEYDOWN:
             if activated is not None:
