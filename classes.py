@@ -9,6 +9,8 @@ class Cell:
     MARGIN = 1
 
     def __init__(self, color, x, y):
+        self.x = x
+        self.y = y
         self.coords = [x, y, self.CELL_SIZE, self.CELL_SIZE]
         self.color = color
 
@@ -103,8 +105,8 @@ class Field:
             cell.draw(scr)
 
 class Menu:
-    WORD_LENGTH = 155
-    WORD_HEIGHT = 50
+    WORD_LENGTH = 310
+    WORD_HEIGHT = 100
     def __init__(self, items):
         self.items = items
     # item = (x, y, name, colour, chosen_colour, number)
@@ -116,9 +118,9 @@ class Menu:
             else:
                 scr.blit(font.render(name, 1, colour), (x, y))
 
-    def menu(self):
+    def menu(self, screen):
         done = True
-        font_menu = pygame.font.Font('MenuFont.ttf', 50)
+        font_menu = pygame.font.Font('MenuFont.ttf', 100)
         index = 0
         while done:
             screen.fill((0, 100, 200))
@@ -147,7 +149,7 @@ class Menu:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if index == 0:
                         done = False
-                    elif index == 1:
+                    elif index == 2:
                         sys.exit()
 
                     

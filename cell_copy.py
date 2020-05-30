@@ -1,7 +1,7 @@
 import pygame
 from classes import Cell, Figure, Field, Menu
 from math import sqrt, ceil
-from random import randint
+from random import randint, choice
 
 WIN_WIDTH = 1350
 WIN_HEIGHT = 768
@@ -16,7 +16,7 @@ MIN_WIN_DIST = ceil(sqrt(2*(Cell.CELL_SIZE+Cell.MARGIN)**2))
 # Standard COLOURS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GRAY = (125, 125, 125)
+GRAY = (205, 205, 205)
 LIGHT_BLUE = (64, 128, 255)
 GREEN = (0, 200, 64)
 YELLOW = (225, 225, 0)
@@ -138,17 +138,20 @@ def checking_outside(coords):
 
 def CreateCellsInFieldCoords():
     coords = []
-    for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER, Cell.CELL_SIZE+Cell.MARGIN):
-        for xpos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER, Cell.CELL_SIZE+Cell.MARGIN):
+    for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
+        for xpos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
             coords.append((xpos, ypos))
     return coords
 
 def FindingPerfectSolution():
+    all_coords = CreateCellsInFieldCoords()
+    busy_coords = []
+    free_coords = []
     bot_figure_positions = []
     used_figures = []
     ArrayShuffler(all_figures)
-    for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER, Cell.CELL_SIZE+Cell.MARGIN):
-        for xpos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER, Cell.CELL_SIZE+Cell.MARGIN):
+    for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
+        for xpos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
             for figure in all_figures:
                 if figure in used_figures:
                     continue
@@ -171,15 +174,26 @@ def FindingPerfectSolution():
                 else:
                     bot_figure_positions.pop()
     if len(bot_figure_positions) != 11:
-        FindingPerfectSolution()
+        bot_figure_positions, free_coords = FindingPerfectSolution()
+
+    for figure in bot_figure_positions:
+        for cell_pos in figure:
+            busy_coords.append(cell_pos)
+
+    for cell_pos in all_coords:
+        if cell_pos not in busy_coords:
+            free_coords.append(cell_pos)
     
 
-FindingPerfectSolution()
+    return bot_figure_positions, free_coords
+    
+
+bot_figure_positions, free_coords = FindingPerfectSolution()
 
 # GAMEPLAY ------------
 
 activated = None
-
+did_graying = False
 running = True
 while running:
     # Filling screen
@@ -187,6 +201,13 @@ while running:
     # Drawing field
     field.draw(field_cells, screen)
     # Supposing all figures are on field
+    num_obstacles = 30
+    if not did_graying:
+        did_graying = True
+        for times in range(num_obstacles):
+            cell = choice(field_cells)
+            cell.color = GRAY
+        
     all_on_field = True
     # Placing figures and getting their positions
     figure_positions = []
