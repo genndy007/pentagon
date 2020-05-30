@@ -100,3 +100,15 @@ class Field:
     def draw(self, cells, scr):
         for cell in cells:
             cell.draw(scr)
+
+class Menu:
+    def __init__(self, items):
+        self.items = items
+    # item = (x, y, name, colour, chosen_colour, number)
+    def render(self, scr, font, num_item):
+        for item in self.items:
+            x, y, name, colour, chosen_colour, number = item
+            if num_item == number:
+                scr.blit(font.render(name, 1, chosen_colour), (x, y))
+            else:
+                scr.blit(font.render(name, 1, colour), (x, y))
