@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 WHITE = (255, 255, 255)
 
@@ -102,6 +103,8 @@ class Field:
             cell.draw(scr)
 
 class Menu:
+    WORD_LENGTH = 155
+    WORD_HEIGHT = 50
     def __init__(self, items):
         self.items = items
     # item = (x, y, name, colour, chosen_colour, number)
@@ -112,3 +115,40 @@ class Menu:
                 scr.blit(font.render(name, 1, chosen_colour), (x, y))
             else:
                 scr.blit(font.render(name, 1, colour), (x, y))
+
+    def menu(self):
+        done = True
+        font_menu = pygame.font.Font('MenuFont.ttf', 50)
+        index = 0
+        while done:
+            screen.fill((0, 100, 200))
+
+            mp = pygame.mouse.get_pos()
+            for item in self.items:
+                if mp[0] > item[0] and mp[0] < item[0]+Menu.WORD_LENGTH and mp[1] > item[1] and mp[1] < item[1]+Menu.WORD_HEIGHT:
+                    index = item[5]
+            
+            self.render(screen, font_menu, index)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        sys.exit()
+                    # Menu Navigation with keyboard
+                    if event.key == pygame.K_UP:
+                        if index > 0:
+                            index -= 1
+                    if event.key == pygame.K_DOWN:
+                        if index < len(self.items) - 1:
+                            index += 1
+                # Navigation with mouse
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if index == 0:
+                        done = False
+                    elif index == 1:
+                        sys.exit()
+
+                    
+            pygame.display.flip()
