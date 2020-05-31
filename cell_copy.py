@@ -9,7 +9,7 @@ FPS = 60
 MIN_BORDER_CORNER = 20
 MAX_BORDER_CORNER = 361
 
-MIN_WIN_DIST = ceil(sqrt(2*(Cell.CELL_SIZE+Cell.MARGIN)**2))
+MIN_WIN_DIST = ceil(sqrt(2*(Cell.CELL_SIZE+Cell.MARGIN)**2))   # Minimal adequate distance for winning
 
 
 
@@ -108,15 +108,15 @@ items = [(120, 140, u'Game', (250, 250, 30), (250, 30, 250), 0),
 game = Menu(items)
 game.menu(screen)
 
-def ArrayShuffler(arr):
+def ArrayShuffler(arr):   # Created by me shuffler
     for times in range(20):
         place1 = randint(0, 10)
         place2 = randint(0, 10)
         arr[place1], arr[place2] = arr[place2], arr[place1]
 
 
-def checking_collisions(figure_positions):
-    for i in range(len(figure_positions)):
+def checking_collisions(figure_positions):    # Here we check collisions for finding
+    for i in range(len(figure_positions)):    # the start solution
         for point1 in figure_positions[i]:
             x1 = point1[0]
             y1 = point1[1]
@@ -130,65 +130,78 @@ def checking_collisions(figure_positions):
                         return True
     return False
 
-def checking_outside(coords):
+def checking_outside(coords):   # Checking if figure in field bounds
     for point in coords:
         if point[0] > 361 or point[1] > 361:
             return True
     return False
 
-def CreateCellsInFieldCoords():
+def CreateCellsInFieldCoords():   # Finding all cells in field coords
     coords = []
     for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
         for xpos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
             coords.append((xpos, ypos))
     return coords
 
-def FindingPerfectSolution():
+def FindingPerfectSolution():    # This will find etalon solution
     all_coords = CreateCellsInFieldCoords()
     busy_coords = []
     free_coords = []
     bot_figure_positions = []
     used_figures = []
-    ArrayShuffler(all_figures)
-    for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
+    ArrayShuffler(all_figures)  # Shuffle figures to randomize their positions on field
+    for ypos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):   # Checking all possible coords
         for xpos in range(MIN_BORDER_CORNER, MAX_BORDER_CORNER+1, Cell.CELL_SIZE+Cell.MARGIN):
-            for figure in all_figures:
+            for figure in all_figures:   # Trying to put every figure
                 if figure in used_figures:
                     continue
+                # Assigning new positions to a figure
                 figure.startX = xpos
                 figure.startY = ypos
                 pos_info = figure.creating_cells()
-                
+                # Checking if it's a good position for a figure
                 bot_figure_positions.append(pos_info[1])
                 num_rotations = 0
-                while (checking_collisions(bot_figure_positions) or checking_outside(pos_info[1])) and num_rotations < 4:
+                while (checking_collisions(bot_figure_positions) or checking_outside(pos_info[1])) and num_rotations < 4: 
+                    # Trying to rotate the figure 
                     figure.rotate()
                     pos_info = figure.creating_cells()
                     bot_figure_positions.pop()
                     bot_figure_positions.append(pos_info[1])
                     num_rotations += 1
-                if not checking_collisions(bot_figure_positions) and not checking_outside(pos_info[1]):
-                    # print(bot_figure_positions)
+                if not checking_collisions(bot_figure_positions) and not checking_outside(pos_info[1]):  # Final checking
+                    # If it's a really good position then it's now belonging to the figure
                     used_figures.append(figure)
+                    figure.etalonX = xpos    # Assgning etalon positions
+                    figure.etalonY = ypos
+                    figure.etalonPos = num_rotations
                     figure.draw(pos_info[0], screen)
                 else:
                     bot_figure_positions.pop()
+    # If not all figures were placed                
     if len(bot_figure_positions) != 11:
         bot_figure_positions, free_coords = FindingPerfectSolution()
-
+    # Finding cells that are busy
     for figure in bot_figure_positions:
         for cell_pos in figure:
             busy_coords.append(cell_pos)
-
+    # Now finding cells that are free, some of them will be obstacles
     for cell_pos in all_coords:
         if cell_pos not in busy_coords:
             free_coords.append(cell_pos)
     
 
     return bot_figure_positions, free_coords
-    
 
+
+# Now finding that solution
 bot_figure_positions, free_coords = FindingPerfectSolution()
+# Getting figures back to desk
+for i in range(len(all_figures)):
+    all_figures[i].startX = desk_positions[i][0]
+    all_figures[i].startY = desk_positions[i][1]
+    all_figures[i].pos_index = 0
+    
 
 # GAMEPLAY ------------
 
@@ -200,14 +213,14 @@ while running:
     screen.fill(BLACK)
     # Drawing field
     field.draw(field_cells, screen)
-    # Supposing all figures are on field
+    # Putting obstacles onto field 
     num_obstacles = 30
     if not did_graying:
         did_graying = True
         for times in range(num_obstacles):
             cell = choice(field_cells)
             cell.color = GRAY
-        
+    # Supposing all figures are on field    
     all_on_field = True
     # Placing figures and getting their positions
     figure_positions = []

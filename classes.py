@@ -20,18 +20,22 @@ class Cell:
 
 
 class Figure:
-    pos_index = 0
+    # pos_index = 0
     MOVE_LEFT = True
     MOVE_RIGHT = True
     MOVE_UP = True
     MOVE_DOWN = True
     ON_FIELD = False
 
-    def __init__(self, color, colloc, startX, startY):
+    def __init__(self, color, colloc, startX, startY, pos_index=0, etalonX=20, etalonY=20, etalonPos=0):
+        self.pos_index = pos_index
         self.color = color
         self.colloc = colloc
         self.startX = startX
         self.startY = startY
+        self.etalonX = etalonX
+        self.etalonY = etalonY
+        self.etalonPos = etalonPos
 
     def creating_cells(self):
         cells = []
