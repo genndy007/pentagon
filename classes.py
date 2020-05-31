@@ -155,6 +155,11 @@ class Menu:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if index == 0:
                         done = False
+                    elif index == 1:
+                        # Create a help menu
+                        return "Help"
+                        # Show its text
+                        # Create a button which by pressing will take us to main menu
                     elif index == 2:
                         sys.exit()
 
