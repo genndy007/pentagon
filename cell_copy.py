@@ -1,5 +1,6 @@
 import pygame
-from classes import Cell, Figure, Field, Menu
+import sys
+from classes import Cell, Figure, Field, Menu, Button
 from math import sqrt, ceil
 from random import randint, choice
 
@@ -22,6 +23,8 @@ GREEN = (0, 200, 64)
 YELLOW = (225, 225, 0)
 PINK = (230, 50, 230)
 RED = (255, 0, 0)
+LIGHT_BEIGE = (255, 255, 153)
+DARK_BEIGE = (255, 255, 102)
 # ----------------
 # Trendy colours
 GREENERY = (136, 176, 75)
@@ -190,7 +193,7 @@ def FindingPerfectSolution():    # This will find etalon solution
     for cell_pos in all_coords:
         if cell_pos not in busy_coords:
             free_coords.append(cell_pos)
-    print(free_coords)
+    # print(free_coords)
     
 
     return bot_figure_positions, free_coords
@@ -210,11 +213,17 @@ for i in range(len(all_figures)):
 activated = None
 did_graying = False
 running = True
+# Creating buttons
+back_to_menu_button = Button(600, 450, 250, 75, text='Back to Menu')
+quit_button = Button(950, 450, 250, 75, text='Quit')
 while running:
     # Filling screen
     screen.fill(BLACK)
     # Drawing field
     field.draw(field_cells, screen)
+    # Drawing buttons
+    back_to_menu_button.draw(screen)
+    quit_button.draw(screen)
     # Putting obstacles onto field 
     num_obstacles = 30
     obstacles = 0
@@ -260,6 +269,7 @@ while running:
             lmb, mmb, rmb = pygame.mouse.get_pressed()
             # Where clicked
             x, y = event.pos
+            # print(x, y)
             
             for i in range(len(figure_positions)):
                 for el in figure_positions[i]:
@@ -285,6 +295,21 @@ while running:
                             activated.startX = activated.etalonX
                             activated.startY = activated.etalonY
                             activated.pos_index = activated.etalonPos
+            # Managing coming back to menu and quitting
+            if back_to_menu_button.isOver(event.pos):
+                game.menu(screen)
+            elif quit_button.isOver(event.pos):
+                sys.exit()
+
+        # Hovering over the buttons
+        if event.type == pygame.MOUSEMOTION:
+            if back_to_menu_button.isOver(event.pos):
+                back_to_menu_button.color = DARK_BEIGE
+            elif quit_button.isOver(event.pos):
+                quit_button.color = DARK_BEIGE
+            else:
+                back_to_menu_button.color = LIGHT_BEIGE
+                quit_button.color = LIGHT_BEIGE
 
         # Managing figure movement
         if event.type == pygame.KEYDOWN:

@@ -162,9 +162,8 @@ class Menu:
             pygame.display.flip()
 
 # Here we implement the button
-
 class Button:
-    def __init__(self, color=LIGHT_BEIGE, x, y, width, height, text=''):
+    def __init__(self, x, y, width, height, color=LIGHT_BEIGE, text=''):
         self.color = color
         self.x = x
         self.y = y
@@ -179,7 +178,7 @@ class Button:
         pygame.draw.rect(scr, self.color, (self.x, self.y, self.width, self.height), 0)
         
         if self.text != '':
-            font = pygame.font.Font('MenuFont.ttf', 60)
+            font = pygame.font.Font('MenuFont.ttf', 40)
             text = font.render(self.text, 1, BLACK)
             scr.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
 
@@ -188,8 +187,6 @@ class Button:
         mouse_y = pos[1]
         if mouse_x > self.x and mouse_x < self.x + self.width:
             if mouse_y > self.y and mouse_y < self.y + self.height:
-                self.color = DARK_BEIGE
-            else:
-                self.color = LIGHT_BEIGE
-        else:
-            self.color = LIGHT_BEIGE
+                return True
+        
+        return False
