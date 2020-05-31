@@ -98,7 +98,7 @@ PLUS = Figure(LILY, fig_start_pos["PLUS"], 1200, 200)
 
 all_figures = [T, LADDER, SWAN, L, ARC, VERTZIG, RUG, STAIR, ONE, ZIGZAG,  PLUS] # Here was stick
 
-desk_positions = [[450, 20], [600, 20], [750, 20], [900, 20], [1050, 20], [1200, 20], [450, 200], [600, 200], [750, 200], [900, 200], [1050, 200]] # , [1200, 200]
+desk_positions = [[475, 45], [625, 45], [775, 45], [925, 45], [1075, 45], [1225, 45], [475, 225], [625, 225], [775, 225], [925, 225], [1075, 225]] # , [1200, 200]
 
 # Creating menu
 items = [(120, 140, u'Game', (250, 250, 30), (250, 30, 250), 0),
@@ -181,6 +181,7 @@ def FindingPerfectSolution():    # This will find etalon solution
     # If not all figures were placed                
     if len(bot_figure_positions) != 11:
         bot_figure_positions, free_coords = FindingPerfectSolution()
+        
     # Finding cells that are busy
     for figure in bot_figure_positions:
         for cell_pos in figure:
@@ -189,6 +190,7 @@ def FindingPerfectSolution():    # This will find etalon solution
     for cell_pos in all_coords:
         if cell_pos not in busy_coords:
             free_coords.append(cell_pos)
+    print(free_coords)
     
 
     return bot_figure_positions, free_coords
@@ -215,11 +217,14 @@ while running:
     field.draw(field_cells, screen)
     # Putting obstacles onto field 
     num_obstacles = 30
+    obstacles = 0
     if not did_graying:
         did_graying = True
-        for times in range(num_obstacles):
+        while obstacles < num_obstacles:
             cell = choice(field_cells)
-            cell.color = GRAY
+            if (cell.x, cell.y) in free_coords:
+                cell.color = GRAY
+                obstacles += 1
     # Supposing all figures are on field    
     all_on_field = True
     # Placing figures and getting their positions
@@ -259,7 +264,7 @@ while running:
             for i in range(len(figure_positions)):
                 for el in figure_positions[i]:
                     if x > el[0] and x < el[0] + Cell.CELL_SIZE and y > el[1] and y < el[1] + Cell.CELL_SIZE:
-                        # Managing LMB
+                        # Managing LMB (Choosing and selecting)
                         if lmb:
                             activated = all_figures[i]
                             # Placing figure on the field if it's not on
@@ -269,12 +274,17 @@ while running:
                                 all_figures[i].ON_FIELD = True
                                 all_figures[i].startX = MIN_BORDER_CORNER
                                 all_figures[i].startY = MIN_BORDER_CORNER
-                        # Managing RMB
+                        # Managing RMB (Putting figure back to desk)
                         elif rmb and activated is not None and activated == all_figures[i]:
                             activated.startX = desk_positions[i][0]
                             activated.startY = desk_positions[i][1]
                             activated.ON_FIELD = False
                             activated = None
+                        # Managing MMB (Putting figure to etalon place)
+                        elif mmb and activated is not None and activated == all_figures[i]:
+                            activated.startX = activated.etalonX
+                            activated.startY = activated.etalonY
+                            activated.pos_index = activated.etalonPos
 
         # Managing figure movement
         if event.type == pygame.KEYDOWN:
