@@ -17,3 +17,6 @@ MMB - use help, place chosen figure on place, computed by program (this way you 
 Space - rotate a figure  
 Arrows - move a figure   
 
+Save
+------------
+You can save your in-game progress at any time of playing and then return to your saved game then.
