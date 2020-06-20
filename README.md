@@ -19,4 +19,4 @@ Arrows - move a figure
 
 Save
 ------------
-You can save your in-game progress at any time of playing and then return to your saved game then.
+You can save your in-game progress at any time of playing and return to your saved game then.
