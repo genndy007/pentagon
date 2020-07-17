@@ -7,7 +7,7 @@ How to run
 -----------
 1. Install pygame
 ```
-pip3 install pygame=2.0.0.dev6        
+pip3 install pygame==2.0.0.dev6        
 ```
 2. Run main file
 ```
