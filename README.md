@@ -3,6 +3,17 @@ PENTAGON
 Pentagon is an open-source puzzle game developed by Hennadii Kochev as a summary work for 1 year of study.
 You may find all rules and controls in HELP menu.
 
+How to run
+-----------
+1. Install pygame
+```
+pip3 install pygame=2.0.0dev6        
+```
+2. Run main file
+```
+python3 main.py       
+```
+
 Rules
 ---------------------
 Your goal is to place figures-pentaminoes (they consist of 5 squares hence the name) (furthermore, that's why
