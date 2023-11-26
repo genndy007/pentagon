@@ -1,0 +1,16 @@
+Pentagon is a logic puzzle game.
+Here you are given with a set of figures - so called `pentaminoes`.
+Your goal is to place those pentaminoes on the field so they
+do not intersect among themselves even with their corners.
+Gray cells on the screen are obstacles, pentaminoes should
+not be placed on them. To make completion easier, you will have
+a help - you can place any figure on its place as it was
+determined by a computer.
+
+
+Controls:
+> Left mouse button - activate the figure (select it)
+> Right mouse button - place a figure back on start desk
+> Middle mouse button - help: place a selected figure on place as computer determined
+> Arrows - move the figure around the field
+> Space - rotate the figure
