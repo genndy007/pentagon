@@ -1,4 +1,4 @@
-PENTAGON
+Pentagon
 ---------------------
 Pentagon is an open-source puzzle game developed by Hennadii Kochev as a summary work for 1 year of study.
 You may find all rules and controls in HELP menu.
